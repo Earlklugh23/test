@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 자동차 AI 트렌드 인포그래픽 SPA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-4px);
+            border-color: rgba(129, 140, 248, 0.4);
+            box-shadow: 0 12px 30px -10px rgba(79, 70, 229, 0.3);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Sticky Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <i class="fa-solid fa-car-side text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-sky-400 tracking-widest uppercase">2026 INFOGRAPHIC SPA</span>
+                        <h1 class="text-sm md:text-base font-extrabold text-white leading-tight">자동차 AI 트렌드 & SDV 생태계 리포트</h1>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-6 text-xs font-medium text-slate-300">
+                    <a href="#overview" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-indigo-400"></i> 시장 전망</a>
+                    <a href="#trends" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-microchip text-indigo-400"></i> 4대 핵심 트렌드</a>
+                    <a href="#ecosystem" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-sitemap text-indigo-400"></i> 공급망 & 노동 재편</a>
+                    <a href="#strategy" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-compass text-indigo-400"></i> 전략 & 진단</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Hero Banner Section -->
+        <section class="relative rounded-3xl p-6 sm:p-10 overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-900 border border-slate-800 shadow-2xl">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 space-y-6 max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold">
+                    <i class="fa-solid fa-bolt text-amber-400"></i> 2026 산업 대전환 스페셜 리포트
+                </div>
+                <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-none">
+                    '실험의 시대'에서 <br>
+                    <span class="gradient-text">'상용화와 책임의 시대'로</span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    2026년 글로벌 자동차 산업은 소프트웨어 정의 차량(SDV)의 실질적 양산과 레벨 3~4 자율주행의 상용화 단계에 진입했습니다. 자동차는 마력(HP)을 겨루는 이동 수단에서 <strong class="text-sky-300">연산 능력(TOPS) 기반의 '바퀴 달린 고성능 AI 디바이스'</strong>로 완벽히 재정의되고 있습니다.
+                </p>
+            </div>
+
+            <!-- Core Metric Callout Banner -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-slate-800/80">
+                <div class="p-4 rounded-2xl glass-card">
+                    <div class="text-xs text-slate-400 font-medium mb-1">2026년 글로벌 AI 시장</div>
+                    <div class="text-2xl sm:text-3xl font-black text-white">$149.9억</div>
+                    <div class="text-[11px] text-sky-400 mt-1 font-semibold"><i class="fa-solid fa-won-sign"></i> 한화 약 20조 원</div>
+                </div>
+                <div class="p-4 rounded-2xl glass-card">
+                    <div class="text-xs text-slate-400 font-medium mb-1">2034년 시장 전망</div>
+                    <div class="text-2xl sm:text-3xl font-black text-emerald-400">$516.8억</div>
+                    <div class="text-[11px] text-emerald-300 mt-1 font-semibold"><i class="fa-solid fa-arrow-trend-up"></i> 연평균 16.7% 성장</div>
+                </div>
+                <div class="p-4 rounded-2xl glass-card">
+                    <div class="text-xs text-slate-400 font-medium mb-1">핵심 가치 평가지표</div>
+                    <div class="text-xl sm:text-2xl font-bold text-amber-400">HP → TOPS</div>
+                    <div class="text-[11px] text-amber-300/80 mt-1">연산력 & OTA 기반</div>
+                </div>
+                <div class="p-4 rounded-2xl glass-card">
+                    <div class="text-xs text-slate-400 font-medium mb-1">자율주행 아키텍처</div>
+                    <div class="text-xl sm:text-2xl font-bold text-purple-400">Physical AI</div>
+                    <div class="text-[11px] text-purple-300/80 mt-1">End-to-End 신경망</div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 1: 시장 성장 전망 & 영역별 비중 -->
+        <section id="overview" class="space-y-6 scroll-mt-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="text-xs font-bold text-sky-400 uppercase tracking-widest">Section 01</div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">글로벌 자동차 AI 시장 전망 및 투자 분포</h2>
+                </div>
+                <p class="text-xs text-slate-400 max-w-md">
+                    SDV 및 자율주행 시장의 성장세를 다각도로 분석하여 기본 및 낙관 시나리오별 전망치를 시각화합니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Market Growth Line Chart Card -->
+                <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-sky-400"></i> 자동차 AI 시장 규모 추이 (2026-2034)
+                                </h3>
+                                <p class="text-xs text-slate-400">단위: 억 달러 ($ Billion)</p>
+                            </div>
+                            <!-- Scenario Toggle Buttons -->
+                            <div class="inline-flex bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+                                <button onclick="setMarketScenario('base')" id="btn-scen-base" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white transition-all">기본 시나리오</button>
+                                <button onclick="setMarketScenario('opt')" id="btn-scen-opt" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">낙관 시나리오</button>
+                            </div>
+                        </div>
+
+                        <!-- Chart Container -->
+                        <div class="chart-container">
+                            <canvas id="marketChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800/80 text-xs text-slate-300 leading-relaxed">
+                        <i class="fa-solid fa-circle-info text-sky-400 mr-1.5"></i>
+                        <strong>인사이트:</strong> 2026년 약 150억 달러에서 2034년 516.8억 달러 규모로 연평균 16.7% 성장하며, 레벨 3 자율주행 채택 확대 및 구독 소프트웨어 활성화 시 낙관 시나리오에서는 600억 달러를 조기 상회할 것으로 전망됩니다.
+                    </div>
+                </div>
+
+                <!-- Domain Investment Doughnut Chart Card -->
+                <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="mb-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-emerald-400"></i> 2026년 AI 밸류체인별 투자 분포
+                            </h3>
+                            <p class="text-xs text-slate-400">완성차 및 부품사의 핵심 R&D 예산 비중</p>
+                        </div>
+
+                        <!-- Chart Container -->
+                        <div class="chart-container" style="height: 240px;">
+                            <canvas id="domainChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Domain Legend & Summary -->
+                    <div class="space-y-2 mt-4 pt-4 border-t border-slate-800 text-xs">
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/50">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-indigo-500 inline-block"></span> 자율주행 (L3/L4)</span>
+                            <span class="font-bold text-indigo-300">45%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/50">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> In-Cabin AI & 멀티모달</span>
+                            <span class="font-bold text-emerald-300">25%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/50">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> SDV OS & 중앙 컴퓨팅</span>
+                            <span class="font-bold text-amber-300">18%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/50">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span> 사이버 보안 & 규제</span>
+                            <span class="font-bold text-rose-300">12%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 2: 2026년 핵심 AI 트렌드 4선 -->
+        <section id="trends" class="space-y-6 scroll-mt-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="text-xs font-bold text-sky-400 uppercase tracking-widest">Section 02</div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">2026년 4대 핵심 AI 트렌드</h2>
+                </div>
+                <p class="text-xs text-slate-400 max-w-md">
+                    카드를 클릭하여 기술적 심층 세부내용과 지역별 규제 현황을 대화형으로 탐색할 수 있습니다.
+                </p>
+            </div>
+
+            <!-- Trend Selection Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Trend 1 Card -->
+                <div onclick="showTrendDetail(1)" id="tcard-1" class="glass-card glass-card-hover p-5 rounded-2xl border-2 border-indigo-500 cursor-pointer relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold">TREND 01</span>
+                        <i class="fa-solid fa-cube text-indigo-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-1">SDV 양산과 주류화</h3>
+                    <p class="text-xs text-slate-400 leading-snug">구독 경제 기반 반복 수익(Recurring Revenue) 모델 및 통합 OS 생태계 구축</p>
+                </div>
+
+                <!-- Trend 2 Card -->
+                <div onclick="showTrendDetail(2)" id="tcard-2" class="glass-card glass-card-hover p-5 rounded-2xl border border-slate-800 cursor-pointer relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">TREND 02</span>
+                        <i class="fa-solid fa-brain text-emerald-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-1">피지컬 AI & 레벨 3~4</h3>
+                    <p class="text-xs text-slate-400 leading-snug">엔드투엔드 신경망 기반 자율주행과 제조사의 법적 책임 수용 전환</p>
+                </div>
+
+                <!-- Trend 3 Card -->
+                <div onclick="showTrendDetail(3)" id="tcard-3" class="glass-card glass-card-hover p-5 rounded-2xl border border-slate-800 cursor-pointer relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">TREND 03</span>
+                        <i class="fa-solid fa-headset text-amber-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-1">In-Cabin 멀티모달 AI</h3>
+                    <p class="text-xs text-slate-400 leading-snug">VLM 및 LLM 내장 생성형 비서, DMS+OMS 통합 안전 모니터링</p>
+                </div>
+
+                <!-- Trend 4 Card -->
+                <div onclick="showTrendDetail(4)" id="tcard-4" class="glass-card glass-card-hover p-5 rounded-2xl border border-slate-800 cursor-pointer relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-bold">TREND 04</span>
+                        <i class="fa-solid fa-shield-halved text-rose-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base mb-1">사이버 보안 & 컴플라이언스</h3>
+                    <p class="text-xs text-slate-400 leading-snug">해킹 및 AI 교란 방지, SBOM 제출 의무화, 데이터 로컬라이제이션</p>
+                </div>
+            </div>
+
+            <!-- Detailed Content Panel -->
+            <div id="trend-detail-wrapper" class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-800">
+                
+                <!-- DETAIL 1: SDV -->
+                <div id="tdetail-1" class="trend-detail-item space-y-6">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold text-indigo-400 uppercase tracking-widest">핵심 분석 01</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">SDV (Software-Defined Vehicle)의 양산과 주류화</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
+                            <h4 class="text-sm font-bold text-indigo-300 flex items-center gap-2">
+                                <i class="fa-solid fa-arrows-rotate text-indigo-400"></i> 구독 경제와 지속적 반복 수익 (Recurring Revenue)
+                            </h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                차량 판매 시점의 일회성 수익을 넘어, 차량 수명주기 전반에 걸친 OTA(무선 업데이트) 기능 판매로 수익 구조가 전면 개편되었습니다.
+                            </p>
+                            <div class="space-y-1.5 text-xs text-slate-400 pt-2 border-t border-slate-800">
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-400"></i> 고도화 자율주행 가입형 패키지 (FSD / HDP)</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-400"></i> AI 인포테인먼트 & 가상 에이전트 프리미엄 서비스</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-400"></i> 배터리 Peak 제어 및 주행 성능 튜닝 소프트웨어</div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
+                            <h4 class="text-sm font-bold text-indigo-300 flex items-center gap-2">
+                                <i class="fa-solid fa-network-wired text-indigo-400"></i> 통합 OS 및 빅테크 합종연횡
+                            </h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                수십 개의 ECU를 영역별 제어(Zonal Architecture) 및 중앙 컴퓨터로 통합하며 전용 OS 주도권 확보 경쟁이 치열합니다.
+                            </p>
+                            <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 text-xs space-y-1">
+                                <div class="font-bold text-sky-300 mb-1"><i class="fa-solid fa-handshake mr-1"></i> 대표 동맹 사례:</div>
+                                <div>• <strong>현대차그룹:</strong> 독자 통합 소프트웨어 플랫폼 '플레오스(Pleos)'</div>
+                                <div>• <strong>폭스바겐 - 퀄컴:</strong> Snapdragon Digital Chassis 기반 아키텍처</div>
+                                <div>• <strong>기아 - 엔비디아:</strong> DRIVE Orin/Thor 연산 플랫폼 협력</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETAIL 2: Physical AI & L3/L4 -->
+                <div id="tdetail-2" class="trend-detail-item space-y-6 hidden">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold text-emerald-400 uppercase tracking-widest">핵심 분석 02</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">'피지컬 AI'와 레벨 3~4 자율주행의 실질적 전개</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <div class="lg:col-span-6 space-y-4">
+                            <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <h4 class="text-sm font-bold text-emerald-300 mb-2"><i class="fa-solid fa-microchip mr-1.5"></i> End-to-End 신경망 기반 Physical AI</h4>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    기존 인간이 작성한 규칙 기반(Rule-based) 코딩에서 벗어나, 센서 입력부터 핸들/페달 제어까지 하나의 통합 AI 신경망이 주변 환경 맥락을 스스로 이해하고 판단하는 구조로 진화했습니다.
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                                <h4 class="text-sm font-bold text-emerald-300 mb-2"><i class="fa-solid fa-scale-balanced mr-1.5"></i> 제조사의 법적 책임 수용과 소비 수용성 확산</h4>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    레벨 3 탑재가 고급 차종에서 중·고급 양산차로 대중화되며, 특정 조건 자율주행 중 발생 사고에 대해 제조사가 법적 책임을 지기 시작해 소비자의 심리적 장벽이 대폭 낮아졌습니다.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Regional Regulation Toggle Component -->
+                        <div class="lg:col-span-6 p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-indigo-950/40 border border-slate-800 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                                        <i class="fa-solid fa-globe text-sky-400"></i> 권역별 자율주행 규제 대응 비교
+                                    </h4>
+                                    <div class="inline-flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-[11px]">
+                                        <button onclick="setRegionTab('asia')" id="btn-reg-asia" class="px-2.5 py-1 rounded-md bg-indigo-600 text-white font-bold">아시아 (한국/중국)</button>
+                                        <button onclick="setRegionTab('europe')" id="btn-reg-europe" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-white">유럽 (EU)</button>
+                                    </div>
+                                </div>
+
+                                <div id="reg-asia-box" class="space-y-2 text-xs">
+                                    <div class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 font-bold w-fit">선제적 입법 & 지오펜스 무인 실증</div>
+                                    <p class="text-slate-300 leading-relaxed pt-1">
+                                        한국과 중국은 선제적 법제화와 지오펜스(Geofence) 무인 구역 확대를 주도 중입니다. 한국은 2026년 광주 등에서 <strong>200대 규모 자율주행차 실증</strong>을 본격 가동하며 2027년 레벨 4 상용화 목표를 순항 중입니다.
+                                    </p>
+                                </div>
+
+                                <div id="reg-europe-box" class="space-y-2 text-xs hidden">
+                                    <div class="px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 font-bold w-fit">고속도로 규제 완화 & 프리미엄 차별화</div>
+                                    <p class="text-slate-300 leading-relaxed pt-1">
+                                        유럽은 고속도로 환경(시속 130km/h 이상)에서의 자율주행 규제를 단계적 완화하며, 엄격한 안전 검증 가이드라인을 바탕으로 프리미엄 차종 중심의 완성도를 높이고 있습니다.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
+                                <i class="fa-solid fa-file-signature text-sky-400 mr-1"></i> 출처: 각 국 교통부 자율주행 도로주행 허가 표준 가이드라인 (2026)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETAIL 3: In-Cabin AI -->
+                <div id="tdetail-3" class="trend-detail-item space-y-6 hidden">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold text-amber-400 uppercase tracking-widest">핵심 분석 03</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">차량 실내(In-Cabin) AI와 멀티모달 인터페이스</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-sm">생성형 AI 비서 (VLM/LLM)</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                ChatGPT, Gemini급 대형언어모델이 차량에 내장되어 단순 음성명령을 넘어 운전자와 자유로운 대화, 맛집 추천 및 능동적 정비 가이드를 수행합니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">
+                                <i class="fa-solid fa-eye"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-sm">시선·감정 인식 멀티모달</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                비전 카메라와 바이오 센서를 결합해 운전자의 시선, 감정 상태 및 피로도를 통합 파악하고 분위기에 맞춘 조명/음향/온도를 자동 제어합니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <h4 class="font-bold text-white text-sm">통합 모니터링 (DMS + OMS)</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                운전자 모니터링(DMS)과 동승자 모니터링(OMS)이 일체화되어 졸음운전 방지, 탑승자 헬스케어 체크, 차내 영유아 방치 예방 등 안전망을 극대화합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETAIL 4: Security & Compliance -->
+                <div id="tdetail-4" class="trend-detail-item space-y-6 hidden">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold text-rose-400 uppercase tracking-widest">핵심 분석 04</span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white">사이버 보안 및 AI 규제 컴플라이언스</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                            <h4 class="text-sm font-bold text-rose-300 flex items-center gap-2">
+                                <i class="fa-solid fa-user-shield text-rose-400"></i> AI 의사결정 교란 및 원격 해킹 대응
+                            </h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                커넥티비티 확대로 인해 자율주행 AI 인지 센서를 교란하는 적대적 공격(Adversarial Attack) 대응 및 무선 네트워크 해킹 방지가 필수 R&D 영역으로 부상했습니다.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
+                            <h4 class="text-sm font-bold text-rose-300 flex items-center gap-2">
+                                <i class="fa-solid fa-file-contract text-rose-400"></i> SBOM 의무화 & 데이터 로컬라이제이션
+                            </h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                북미·유럽 시장 진출 시 소프트웨어 자재 명세서(SBOM) 제출이 의무화되었으며, 차내 수집 데이터의 국외 유출을 제한하는 각국 법안 준수가 필수입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- SECTION 3: 공급망 권력 지형도 및 인력 재편 -->
+        <section id="ecosystem" class="space-y-6 scroll-mt-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="text-xs font-bold text-sky-400 uppercase tracking-widest">Section 03</div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">자동차 생태계 권력 지형도 & 노동시장 재편</h2>
+                </div>
+                <p class="text-xs text-slate-400 max-w-md">
+                    반도체 팹리스 및 소프트웨어 파트너가 최상위 포식자로 군림하는 새로운 밸류체인 구조를 보여줍니다.
+                </p>
+            </div>
+
+            <!-- HTML/Tailwind Flow Chart Component for Ecosystem Power Hierarchy -->
+            <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap text-indigo-400"></i> 2026년 자동차 AI 밸류체인 권력 구도
+                </h3>
+
+                <!-- Process Grid Map (NO SVG / NO MERMAID) -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                    
+                    <!-- Tier 1: Chip/Big Tech -->
+                    <div class="p-5 rounded-2xl bg-gradient-to-b from-indigo-900/60 to-slate-900 border border-indigo-500/50 space-y-2 relative">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black tracking-wider text-indigo-300 uppercase">Top Tier Leader</span>
+                            <i class="fa-solid fa-microchip text-indigo-400 text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">AI 칩 메이커 & 빅테크</h4>
+                        <p class="text-xs text-slate-300">NVIDIA, Qualcomm, Mobileye, Big Tech</p>
+                        <div class="text-[11px] text-indigo-300 bg-indigo-500/20 p-2 rounded-lg font-medium">
+                            OEM과 직접 계약을 체결하며 최상위 주도권 확보
+                        </div>
+                    </div>
+
+                    <!-- Tier 2: OEM -->
+                    <div class="p-5 rounded-2xl bg-gradient-to-b from-sky-900/60 to-slate-900 border border-sky-500/50 space-y-2 relative">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black tracking-wider text-sky-300 uppercase">Platform Integrator</span>
+                            <i class="fa-solid fa-car text-sky-400 text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">완성차 OEM (SDV)</h4>
+                        <p class="text-xs text-slate-300">현대차그룹, 폭스바겐, 테슬라, 기아</p>
+                        <div class="text-[11px] text-sky-300 bg-sky-500/20 p-2 rounded-lg font-medium">
+                            통합 OS 구축 및 데이터 수익화(SaaS) 내재화
+                        </div>
+                    </div>
+
+                    <!-- Tier 3: Traditional Tier 1 -->
+                    <div class="p-5 rounded-2xl bg-slate-900 border border-slate-700 space-y-2 relative">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black tracking-wider text-slate-400 uppercase">System Modular</span>
+                            <i class="fa-solid fa-gears text-slate-400 text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">전통 Tier 1 대형 부품사</h4>
+                        <p class="text-xs text-slate-300">Bosch, Continental, 현대모비스</p>
+                        <div class="text-[11px] text-slate-400 bg-slate-800 p-2 rounded-lg font-medium">
+                            단순 부품 공급에서 SW 융합 솔루션사로 탈바꿈 요구
+                        </div>
+                    </div>
+
+                    <!-- Tier 4: Sub Tier -->
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-rose-900/40 space-y-2 relative">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black tracking-wider text-rose-400 uppercase">At Risk Group</span>
+                            <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-base">중소 하드웨어 부품사</h4>
+                        <p class="text-xs text-slate-300">샤시, 단일 전장 가공업체</p>
+                        <div class="text-[11px] text-rose-300 bg-rose-500/10 p-2 rounded-lg font-medium">
+                            API 호환 및 SW 표준화 미대응 시 도태 위험
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Talent Market Transformation Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black">01</div>
+                    <h3 class="font-bold text-white text-base">인력 구조의 대재배치</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        전통 기계 정비 및 내연기관 설계 인력 수요는 크게 줄어드는 반면, SW 엔지니어, 데이터 사이언티스트, AI 칩 설계자 채용난이 심화되었습니다.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-black">02</div>
+                    <h3 class="font-bold text-white text-base">반도체 팹리스의 직계약</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        NVIDIA, Qualcomm 등 고성능 SoC 기업이 OEM과 직접 아키텍처를 설계하며 기존 1차 부품사(Tier 1)의 중간 입지를 위협하고 있습니다.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-3">
+                    <div class="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-black">03</div>
+                    <h3 class="font-bold text-white text-base">중소 부품사의 SW-Defined 과제</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        기계적 부품 구동부를 AUTOSAR 표준 및 API 제어 가능 구조로 전환하지 못하는 하위 하드웨어 공급사는 공급망에서 도태 중입니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION 4: 시사점 & 대응 전략 & 자가 진단 -->
+        <section id="strategy" class="space-y-6 scroll-mt-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-slate-800 pb-4">
+                <div>
+                    <div class="text-xs font-bold text-sky-400 uppercase tracking-widest">Section 04</div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">시사점 및 전략 가이드</h2>
+                </div>
+                <p class="text-xs text-slate-400 max-w-md">
+                    성공적인 SDV 전환을 위한 기업 및 정부 차원의 핵심 실행 과제를 확인하십시오.
+                </p>
+            </div>
+
+            <!-- Action Guide Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Corporate Strategy Card -->
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-building"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">완성차 및 부품사 대응 전략</h3>
+                    </div>
+                    <ul class="space-y-3 text-xs text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-indigo-400 mt-0.5"></i>
+                            <div><strong>데이터 수익화 모델 (SaaS) 구축:</strong> 일회성 차 값 수취에서 벗어나 OTA 연계 구독형 소프트웨어 모델을 확립할 것</div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-indigo-400 mt-0.5"></i>
+                            <div><strong>과감한 오픈 이노베이션:</strong> 모든 기술의 자체개발 고집을 버리고 빅테크/반도체사와 유연한 생태계 동맹 추진</div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-indigo-400 mt-0.5"></i>
+                            <div><strong>SBOM 기반 보안 내재화:</strong> 소프트웨어 자재 명세서 검증 시스템을 DevSecOps 개발 공정에 즉시 편입할 것</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Policy Strategy Card -->
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-landmark"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">정부 및 규제 당국 지원 과제</h3>
+                    </div>
+                    <ul class="space-y-3 text-xs text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5"></i>
+                            <div><strong>레벨 4 자율주행 실증 확대:</strong> 무인 운행 지오펜스 지자체 실증구역 지정 및 규제 샌드박스 과감히 적용</div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5"></i>
+                            <div><strong>사고 책임 및 보험 체계 개편:</strong> AI 운전 주체 사고 발생 시 과실 비율 산정 기준 및 제조물책임법 수립</div>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5"></i>
+                            <div><strong>V2X 및 통신 인프라 구축:</strong> 차량-사물 간 지연 없는 연동을 위한 도로 단위 V2X 및 차세대 네트워크망 확장</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Interactive Self Diagnostic Tool -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/40 shadow-2xl space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-bold text-sky-400 uppercase tracking-widest mb-1">
+                            <i class="fa-solid fa-calculator"></i> Interactive Assessment
+                        </div>
+                        <h3 class="text-xl font-extrabold text-white">우리 기업의 2026 SDV/AI 대응 준비도 진단</h3>
+                        <p class="text-xs text-slate-300 mt-1">체크 항목을 눌러 현재 조직의 준비 상태 점수와 권장 가이드를 확인해 보세요.</p>
+                    </div>
+                    <div class="px-5 py-3 rounded-2xl bg-slate-900/90 border border-indigo-500/50 text-center min-w-[140px]">
+                        <div class="text-[10px] text-slate-400 font-bold uppercase">준비도 점수</div>
+                        <div id="diag-score" class="text-3xl font-black text-sky-400">0 / 100</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <label class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-indigo-500/50 transition-colors">
+                        <input type="checkbox" onchange="calcDiagnosticScore()" class="diag-cb mt-0.5 rounded text-indigo-600 focus:ring-0" value="25">
+                        <span class="text-slate-300">영역별 제어(Zonal Architecture) 및 중앙 집중형 통합 OS 대응 로드맵 보유</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-indigo-500/50 transition-colors">
+                        <input type="checkbox" onchange="calcDiagnosticScore()" class="diag-cb mt-0.5 rounded text-indigo-600 focus:ring-0" value="25">
+                        <span class="text-slate-300">OTA 기반 무선 업데이트 기능 및 구독형 지속 수익(SaaS) 모델 설계</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-indigo-500/50 transition-colors">
+                        <input type="checkbox" onchange="calcDiagnosticScore()" class="diag-cb mt-0.5 rounded text-indigo-600 focus:ring-0" value="25">
+                        <span class="text-slate-300">소프트웨어 자재 명세서(SBOM) 및 자동차 사이버 보안 규제(UN R155 등) 준수 체계</span>
+                    </label>
+                    <label class="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 cursor-pointer hover:border-indigo-500/50 transition-colors">
+                        <input type="checkbox" onchange="calcDiagnosticScore()" class="diag-cb mt-0.5 rounded text-indigo-600 focus:ring-0" value="25">
+                        <span class="text-slate-300">비전-언어 모델(VLM) 또는 LLM 기반 실내 생성형 AI 비서 프로젝트 진행 중</span>
+                    </label>
+                </div>
+
+                <div id="diag-feedback" class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+                    <i class="fa-solid fa-circle-info text-sky-400 mr-1.5"></i> 항목을 체크하시면 실행 가이드가 활성화됩니다.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="text-slate-400 font-medium">2026 자동차 AI 트렌드 분석 보고서 기반 SPA 인포그래픽</p>
+            <p class="text-[11px] text-slate-600">본 대시보드는 Single-Page Application 형태로 설계되었으며 모든 수치는 최신 자동차 산업 보고서 기반입니다.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Tab Detail Selector Logic
+        function showTrendDetail(id) {
+            for (let i = 1; i <= 4; i++) {
+                const card = document.getElementById(`tcard-${i}`);
+                const detail = document.getElementById(`tdetail-${i}`);
+                
+                if (i === id) {
+                    card.classList.remove('border-slate-800');
+                    card.classList.add('border-2', 'border-indigo-500');
+                    detail.classList.remove('hidden');
+                } else {
+                    card.classList.remove('border-2', 'border-indigo-500');
+                    card.classList.add('border-slate-800');
+                    detail.classList.add('hidden');
+                }
+            }
+        }
+
+        // Region Tab Toggle Logic
+        function setRegionTab(region) {
+            const btnAsia = document.getElementById('btn-reg-asia');
+            const btnEurope = document.getElementById('btn-reg-europe');
+            const boxAsia = document.getElementById('reg-asia-box');
+            const boxEurope = document.getElementById('reg-europe-box');
+
+            if (region === 'asia') {
+                btnAsia.className = 'px-2.5 py-1 rounded-md bg-indigo-600 text-white font-bold';
+                btnEurope.className = 'px-2.5 py-1 rounded-md text-slate-400 hover:text-white';
+                boxAsia.classList.remove('hidden');
+                boxEurope.classList.add('hidden');
+            } else {
+                btnEurope.className = 'px-2.5 py-1 rounded-md bg-indigo-600 text-white font-bold';
+                btnAsia.className = 'px-2.5 py-1 rounded-md text-slate-400 hover:text-white';
+                boxEurope.classList.remove('hidden');
+                boxAsia.classList.add('hidden');
+            }
+        }
+
+        // Diagnostic Score Calculator
+        function calcDiagnosticScore() {
+            const checkboxes = document.querySelectorAll('.diag-cb');
+            let score = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) score += parseInt(cb.value);
+            });
+
+            document.getElementById('diag-score').innerText = `${score} / 100`;
+            const feedback = document.getElementById('diag-feedback');
+
+            if (score === 0) {
+                feedback.innerHTML = `<i class="fa-solid fa-circle-info text-sky-400 mr-1.5"></i> 항목을 체크하시면 실행 가이드가 활성화됩니다.`;
+            } else if (score <= 50) {
+                feedback.innerHTML = `<strong class="text-amber-400"><i class="fa-solid fa-triangle-exclamation mr-1"></i> [기초 단계]</strong> SDV 아키텍처 수립 및 외부 반도체/SW 파트너 파트너십 구축이 시급합니다.`;
+            } else if (score <= 75) {
+                feedback.innerHTML = `<strong class="text-sky-300"><i class="fa-solid fa-arrows-spin mr-1"></i> [실행 고도화 단계]</strong> 핵심기술 인프라가 진행 중입니다. 데이터 수익화(SaaS)와 SBOM 보안 준수를 가속화하십시오.`;
+            } else {
+                feedback.innerHTML = `<strong class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> [SDV 글로벌 리더 그룹]</strong> 2026년 상용화 생태계의 선두주자로서, 글로벌 레벨 4 실증사업 및 VLM AI 비서 고도화에 주력하세요.`;
+            }
+        }
+
+        // Chart.js Setup
+        let marketChartInstance = null;
+
+        const marketChartData = {
+            years: ['2026년', '2027년', '2028년', '2029년', '2030년', '2032년', '2034년'],
+            base: [149.9, 175.0, 204.2, 238.3, 278.1, 378.5, 516.8],
+            optimistic: [149.9, 188.0, 235.0, 290.0, 360.0, 480.0, 620.0]
+        };
+
+        function renderCharts() {
+            // Line Chart: Market Projections
+            const ctxMarket = document.getElementById('marketChart').getContext('2d');
+            marketChartInstance = new Chart(ctxMarket, {
+                type: 'line',
+                data: {
+                    labels: marketChartData.years,
+                    datasets: [{
+                        label: '시장 규모 ($B)',
+                        data: marketChartData.base,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#818cf8',
+                        pointHoverRadius: 7,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                        return label.join(' ');
+                                    } else {
+                                        return label;
+                                    }
+                                },
+                                label: function(context) {
+                                    return ` 시장 규모: $${context.raw}억 (한화 약 ${(context.raw * 1.33).toFixed(1)}조 원)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8', callback: value => '$' + value + '억' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+
+            // Doughnut Chart: AI Domain Investments
+            // Processed labels (over 16 chars array check requirement)
+            const domainLabels = [
+                '자율주행 (L3/L4)',
+                ['In-Cabin AI &', '멀티모달 비서'],
+                ['SDV OS 및', '중앙 컴퓨팅'],
+                ['사이버 보안 &', '컴플라이언스']
+            ];
+
+            const ctxDomain = document.getElementById('domainChart').getContext('2d');
+            new Chart(ctxDomain, {
+                type: 'doughnut',
+                data: {
+                    labels: domainLabels,
+                    datasets: [{
+                        data: [45, 25, 18, 12],
+                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#f43f5e'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                        return label.join(' ');
+                                    } else {
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        function setMarketScenario(scen) {
+            const btnBase = document.getElementById('btn-scen-base');
+            const btnOpt = document.getElementById('btn-scen-opt');
+
+            if (scen === 'base') {
+                btnBase.className = 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white transition-all';
+                btnOpt.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+                marketChartInstance.data.datasets[0].data = marketChartData.base;
+                marketChartInstance.data.datasets[0].borderColor = '#38bdf8';
+                marketChartInstance.data.datasets[0].backgroundColor = 'rgba(56, 189, 248, 0.12)';
+            } else {
+                btnOpt.className = 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition-all';
+                btnBase.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all';
+                marketChartInstance.data.datasets[0].data = marketChartData.optimistic;
+                marketChartInstance.data.datasets[0].borderColor = '#10b981';
+                marketChartInstance.data.datasets[0].backgroundColor = 'rgba(16, 185, 129, 0.12)';
+            }
+            marketChartInstance.update();
+        }
+
+        // Initialize on DOM load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCharts();
+        });
+    </script>
+</body>
+</html>
