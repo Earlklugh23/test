@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Space Shooter</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            touch-action: none; /* Prevent scrolling on mobile */
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 3 / 4; /* Mobile-friendly portrait ratio */
+            background-color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through to canvas */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .hud {
+            color: #0ff;
+            text-shadow: 0 0 5px #0ff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #screens {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .screen-title {
+            font-size: 3rem;
+            color: #f0f;
+            text-shadow: 0 0 10px #f0f;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .btn {
+            pointer-events: auto;
+            background: transparent;
+            color: #0ff;
+            border: 2px solid #0ff;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            background: #0ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Controls */
+        #mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .control-zone {
+            pointer-events: auto;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .control-zone:active {
+            background: rgba(0, 255, 255, 0.2);
+        }
+        
+        @media (min-width: 768px) {
+            #mobile-controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui-layer">
+        <div class="hud">
+            <div>SCORE: <span id="scoreDisplay">0</span></div>
+            <div>LIVES: <span id="livesDisplay">3</span></div>
+        </div>
+    </div>
+
+    <div id="screens">
+        <div id="start-screen">
+            <h1 class="screen-title">NEON<br>DEFENDER</h1>
+            <p style="color: #aaa; margin-bottom: 30px;">Desktop: Arrows to move, Space to shoot<br>Mobile: Use on-screen buttons</p>
+            <button class="btn" id="startBtn">START MISSION</button>
+        </div>
+        
+        <div id="game-over-screen" class="hidden">
+            <h1 class="screen-title" style="color: #f00; text-shadow: 0 0 10px #f00;">GAME OVER</h1>
+            <p style="font-size: 1.5rem; margin-bottom: 30px;">FINAL SCORE: <span id="finalScore">0</span></p>
+            <button class="btn" id="restartBtn">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- Controls for touch devices -->
+    <div id="mobile-controls" class="hidden" style="align-items: flex-end;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+            <div class="control-zone" id="btnUp" style="width: 50px; height: 50px; border-radius: 10px;">▲</div>
+            <div style="display: flex; gap: 5px;">
+                <div class="control-zone" id="btnLeft" style="width: 50px; height: 50px; border-radius: 10px;">◀</div>
+                <div class="control-zone" id="btnDown" style="width: 50px; height: 50px; border-radius: 10px;">▼</div>
+                <div class="control-zone" id="btnRight" style="width: 50px; height: 50px; border-radius: 10px;">▶</div>
+            </div>
+        </div>
+        <div class="control-zone" id="btnShoot" style="border-radius: 50%; background: rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.5);">🔥</div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const screens = document.getElementById('screens');
+    const startScreen = document.getElementById('start-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const livesDisplay = document.getElementById('livesDisplay');
+    const finalScoreDisplay = document.getElementById('finalScore');
+    const mobileControls = document.getElementById('mobile-controls');
+
+    // Handle high DPI displays for crisp rendering
+    function resizeCanvas() {
+        const container = document.getElementById('game-container');
+        const rect = container.getBoundingClientRect();
+        
+        // Set actual size in memory (scaled for retina displays)
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        
+        // Normalize coordinate system to use css pixels
+        ctx.scale(dpr, dpr);
+        
+        // Store logical size for game logic
+        game.width = rect.width;
+        game.height = rect.height;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Game State
+    const game = {
+        width: 0,
+        height: 0,
+        state: 'START', // START, PLAYING, GAMEOVER
+        score: 0,
+        lives: 3,
+        lastTime: 0,
+        stars: []
+    };
+
+    // Input State
+    const keys = {
+        ArrowLeft: false,
+        ArrowRight: false,
+        ArrowUp: false,
+        ArrowDown: false,
+        Space: false
+    };
+
+    class Player {
+        constructor() {
+            this.width = 40;
+            this.height = 30;
+            this.x = game.width / 2 - this.width / 2;
+            this.y = game.height - 60;
+            this.speed = 300; // pixels per second
+            this.color = '#0ff';
+            this.cooldown = 0;
+            this.fireRate = 0.2; // seconds between shots
+            this.isInvulnerable = false;
+            this.invulnerableTimer = 0;
+        }
+
+        update(dt) {
+            // Movement
+            if (keys.ArrowLeft) this.x -= this.speed * dt;
+            if (keys.ArrowRight) this.x += this.speed * dt;
+            if (keys.ArrowUp) this.y -= this.speed * dt;
+            if (keys.ArrowDown) this.y += this.speed * dt;
+
+            // Constrain to screen
+            if (this.x < 0) this.x = 0;
+            if (this.x + this.width > game.width) this.x = game.width - this.width;
+            if (this.y < 0) this.y = 0;
+            if (this.y + this.height > game.height) this.y = game.height - this.height;
+
+            // Shooting
+            this.cooldown -= dt;
+            if (keys.Space && this.cooldown <= 0) {
+                this.shoot();
+            }
+            
+            // Invulnerability blink
+            if (this.isInvulnerable) {
+                this.invulnerableTimer -= dt;
+                if (this.invulnerableTimer <= 0) {
+                    this.isInvulnerable = false;
+                }
+            }
+        }
+
+        shoot() {
+            projectiles.push(new Projectile(this.x + this.width / 2, this.y, -500, '#0ff', true));
+            this.cooldown = this.fireRate;
+            createParticles(this.x + this.width / 2, this.y, 5, '#0ff', 2);
+        }
+
+        draw() {
+            if (this.isInvulnerable && Math.floor(Date.now() / 100) % 2 === 0) return;
+            
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            
+            // Draw ship shape
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width / 2, this.y);
+            ctx.lineTo(this.x + this.width, this.y + this.height);
+            ctx.lineTo(this.x + this.width / 2, this.y + this.height - 10);
+            ctx.lineTo(this.x, this.y + this.height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.shadowBlur = 0; // reset
+        }
+    }
+
+    class Enemy {
+        constructor(x, y, type) {
+            this.width = 30;
+            this.height = 30;
+            this.x = x;
+            this.y = y;
+            this.type = type;
+            this.speedY = 50 + Math.random() * 50 + (game.score / 100); // Speed increases with score
+            this.speedX = (Math.random() - 0.5) * 100;
+            this.color = type === 1 ? '#f0f' : '#f00';
+            this.hp = type;
+            this.markedForDeletion = false;
+        }
+
+        update(dt) {
+            this.y += this.speedY * dt;
+            
+            // Wave movement for type 2
+            if (this.type === 2) {
+                this.x += Math.sin(this.y / 50) * 150 * dt;
+            } else {
+                this.x += this.speedX * dt;
+            }
+
+            // Bounce off walls
+            if (this.x <= 0 || this.x + this.width >= game.width) {
+                this.speedX *= -1;
+            }
+
+            if (this.y > game.height) {
+                this.markedForDeletion = true;
+                // Penalize letting enemies pass? Optional.
+            }
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            
+            if (this.type === 1) {
+                // Diamond shape
+                ctx.beginPath();
+                ctx.moveTo(this.x + this.width / 2, this.y);
+                ctx.lineTo(this.x + this.width, this.y + this.height / 2);
+                ctx.lineTo(this.x + this.width / 2, this.y + this.height);
+                ctx.lineTo(this.x, this.y + this.height / 2);
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                // Square with hole
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
+            }
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    class Projectile {
+        constructor(x, y, speedY, color, isPlayer) {
+            this.x = x;
+            this.y = y;
+            this.radius = 3;
+            this.speedY = speedY;
+            this.color = color;
+            this.isPlayer = isPlayer;
+            this.markedForDeletion = false;
+        }
+
+        update(dt) {
+            this.y += this.speedY * dt;
+            if (this.y < 0 || this.y > game.height) {
+                this.markedForDeletion = true;
+            }
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    class Particle {
+        constructor(x, y, color, speed) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.velocity = {
+                x: (Math.random() - 0.5) * speed * 100,
+                y: (Math.random() - 0.5) * speed * 100
+            };
+            this.life = 1.0;
+            this.decay = Math.random() * 0.05 + 0.02;
+            this.size = Math.random() * 3 + 1;
+        }
+        
+        update(dt) {
+            this.x += this.velocity.x * dt;
+            this.y += this.velocity.y * dt;
+            this.life -= this.decay;
+        }
+        
+        draw() {
+            ctx.fillStyle = `rgba(${hexToRgb(this.color)}, ${this.life})`;
+            ctx.fillRect(this.x, this.y, this.size, this.size);
+        }
+    }
+
+    // Helper for particles
+    function hexToRgb(hex) {
+        if(hex === '#0ff') return '0, 255, 255';
+        if(hex === '#f0f') return '255, 0, 255';
+        if(hex === '#f00') return '255, 0, 0';
+        return '255, 255, 255';
+    }
+
+    let player;
+    let enemies = [];
+    let projectiles = [];
+    let particles = [];
+    let enemySpawnTimer = 0;
+
+    function initStars() {
+        game.stars = [];
+        for (let i = 0; i < 100; i++) {
+            game.stars.push({
+                x: Math.random() * game.width,
+                y: Math.random() * game.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 50 + 10
+            });
+        }
+    }
+
+    function createParticles(x, y, count, color, speed) {
+        for(let i=0; i<count; i++) {
+            particles.push(new Particle(x, y, color, speed));
+        }
+    }
+
+    function checkCollisions() {
+        // Player projectiles hitting enemies
+        projectiles.filter(p => p.isPlayer).forEach(p => {
+            enemies.forEach(e => {
+                if (p.x > e.x && p.x < e.x + e.width &&
+                    p.y > e.y && p.y < e.y + e.height) {
+                    p.markedForDeletion = true;
+                    e.hp--;
+                    createParticles(p.x, p.y, 5, e.color, 1);
+                    
+                    if (e.hp <= 0) {
+                        e.markedForDeletion = true;
+                        createParticles(e.x + e.width/2, e.y + e.height/2, 20, e.color, 3);
+                        game.score += e.type * 10;
+                        updateHUD();
+                    }
+                }
+            });
+        });
+
+        // Enemies hitting player
+        if (!player.isInvulnerable) {
+            enemies.forEach(e => {
+                // Simple bounding box collision
+                if (player.x < e.x + e.width &&
+                    player.x + player.width > e.x &&
+                    player.y < e.y + e.height &&
+                    player.y + player.height > e.y) {
+                    
+                    e.markedForDeletion = true;
+                    createParticles(player.x + player.width/2, player.y + player.height/2, 30, player.color, 4);
+                    game.lives--;
+                    updateHUD();
+                    
+                    if (game.lives <= 0) {
+                        endGame();
+                    } else {
+                        player.isInvulnerable = true;
+                        player.invulnerableTimer = 2; // 2 seconds invulnerability
+                    }
+                }
+            });
+        }
+    }
+
+    function spawnEnemy(dt) {
+        enemySpawnTimer -= dt;
+        if (enemySpawnTimer <= 0) {
+            let type = Math.random() > 0.8 ? 2 : 1;
+            let x = Math.random() * (game.width - 30);
+            enemies.push(new Enemy(x, -30, type));
+            
+            // Spawn rate gets faster as score increases
+            let spawnRate = Math.max(0.5, 2 - (game.score / 500));
+            enemySpawnTimer = spawnRate;
+        }
+    }
+
+    function updateHUD() {
+        scoreDisplay.innerText = game.score;
+        livesDisplay.innerText = game.lives;
+    }
+
+    function drawBackground(dt) {
+        ctx.fillStyle = '#050510';
+        ctx.fillRect(0, 0, game.width, game.height);
+        
+        ctx.fillStyle = '#fff';
+        game.stars.forEach(star => {
+            star.y += star.speed * dt;
+            if (star.y > game.height) {
+                star.y = 0;
+                star.x = Math.random() * game.width;
+            }
+            ctx.globalAlpha = Math.random() * 0.5 + 0.3;
+            ctx.fillRect(star.x, star.y, star.size, star.size);
+        });
+        ctx.globalAlpha = 1.0;
+    }
+
+    function gameLoop(timestamp) {
+        // Calculate delta time in seconds
+        let dt = (timestamp - game.lastTime) / 1000;
+        if (dt > 0.1) dt = 0.1; // Cap dt to prevent huge jumps if tab is inactive
+        game.lastTime = timestamp;
+
+        if (game.state === 'PLAYING') {
+            // Clear & Draw Background
+            drawBackground(dt);
+
+            // Spawn Entities
+            spawnEnemy(dt);
+
+            // Update & Draw Entities
+            player.update(dt);
+            player.draw();
+
+            enemies.forEach(e => {
+                e.update(dt);
+                e.draw();
+            });
+
+            projectiles.forEach(p => {
+                p.update(dt);
+                p.draw();
+            });
+            
+            particles.forEach(p => {
+                p.update(dt);
+                p.draw();
+            });
+
+            checkCollisions();
+
+            // Cleanup deleted entities
+            enemies = enemies.filter(e => !e.markedForDeletion);
+            projectiles = projectiles.filter(p => !p.markedForDeletion);
+            particles = particles.filter(p => p.life > 0);
+        } else if (game.state === 'START' || game.state === 'GAMEOVER') {
+             // Just draw scrolling background for menu screens
+             drawBackground(dt);
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+        resizeCanvas();
+        initStars();
+        player = new Player();
+        enemies = [];
+        projectiles = [];
+        particles = [];
+        game.score = 0;
+        game.lives = 3;
+        enemySpawnTimer = 1;
+        updateHUD();
+        
+        screens.classList.add('hidden');
+        startScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden');
+        
+        // Show mobile controls if on touch device
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            mobileControls.classList.remove('hidden');
+        }
+
+        game.state = 'PLAYING';
+    }
+
+    function endGame() {
+        game.state = 'GAMEOVER';
+        screens.classList.remove('hidden');
+        gameOverScreen.classList.remove('hidden');
+        finalScoreDisplay.innerText = game.score;
+        mobileControls.classList.add('hidden');
+    }
+
+    // Event Listeners - Keyboard
+    window.addEventListener('keydown', e => {
+        if (e.code === 'ArrowLeft') keys.ArrowLeft = true;
+        if (e.code === 'ArrowRight') keys.ArrowRight = true;
+        if (e.code === 'ArrowUp') keys.ArrowUp = true;
+        if (e.code === 'ArrowDown') keys.ArrowDown = true;
+        if (e.code === 'Space') keys.Space = true;
+    });
+
+    window.addEventListener('keyup', e => {
+        if (e.code === 'ArrowLeft') keys.ArrowLeft = false;
+        if (e.code === 'ArrowRight') keys.ArrowRight = false;
+        if (e.code === 'ArrowUp') keys.ArrowUp = false;
+        if (e.code === 'ArrowDown') keys.ArrowDown = false;
+        if (e.code === 'Space') keys.Space = false;
+    });
+
+    // Event Listeners - UI Buttons
+    document.getElementById('startBtn').addEventListener('click', startGame);
+    document.getElementById('restartBtn').addEventListener('click', startGame);
+
+    // Event Listeners - Mobile Touch Controls
+    const btnLeft = document.getElementById('btnLeft');
+    const btnRight = document.getElementById('btnRight');
+    const btnUp = document.getElementById('btnUp');
+    const btnDown = document.getElementById('btnDown');
+    const btnShoot = document.getElementById('btnShoot');
+
+    const handleTouch = (btn, key, isDown) => {
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+        btn.addEventListener('mousedown', (e) => { e.preventDefault(); keys[key] = true; });
+        btn.addEventListener('mouseup', (e) => { e.preventDefault(); keys[key] = false; });
+        btn.addEventListener('mouseleave', (e) => { e.preventDefault(); keys[key] = false; });
+    };
+
+    handleTouch(btnLeft, 'ArrowLeft');
+    handleTouch(btnRight, 'ArrowRight');
+    handleTouch(btnUp, 'ArrowUp');
+    handleTouch(btnDown, 'ArrowDown');
+    handleTouch(btnShoot, 'Space');
+
+    // Prevent default touch behaviors (like zooming) on canvas
+    canvas.addEventListener('touchstart', e => e.preventDefault(), {passive: false});
+
+    // Initialization
+    resizeCanvas();
+    initStars();
+    requestAnimationFrame(gameLoop);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대출 월 상환액 계산기</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN for visual representation -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        
+        /* Custom styling for range sliders */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #4f46e5; /* Tailwind indigo-600 */
+            cursor: pointer;
+            margin-top: -8px; /* Center the thumb */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e5e7eb; /* Tailwind gray-200 */
+            border-radius: 2px;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+        
+        /* Hide number input arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 text-gray-800 flex justify-center items-start">
+
+<div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+    
+    <!-- Left Column: Input Form -->
+    <div class="w-full md:w-1/2 p-6 sm:p-8 border-b md:border-b-0 md:border-r border-gray-100">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+            <div class="bg-indigo-100 p-3 rounded-xl text-indigo-600">
+                <i class="fa-solid fa-calculator text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-900">대출 상환 계산기</h1>
+                <p class="text-xs text-gray-500">원리금균등분할상환 방식 기준</p>
+            </div>
+        </div>
+
+        <form id="calculatorForm" class="space-y-6">
+            
+            <!-- 대출 원금 (Principal Amount) -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <label for="principalInput" class="block text-sm font-semibold text-gray-700">대출 원금 (원)</label>
+                    <span id="principalText" class="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">1억 원</span>
+                </div>
+                <div class="relative rounded-md shadow-sm">
+                    <input type="text" id="principalInput" name="principal" value="100,000,000" 
+                           class="block w-full rounded-lg border-gray-300 pl-4 pr-12 py-3 text-right text-lg font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 border outline-none transition-colors" placeholder="0">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                        <span class="text-gray-500 font-medium">원</span>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <button type="button" onclick="addAmount(1000000)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">+100만</button>
+                    <button type="button" onclick="addAmount(10000000)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">+1000만</button>
+                    <button type="button" onclick="addAmount(50000000)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">+5000만</button>
+                    <button type="button" onclick="addAmount(100000000)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">+1억</button>
+                </div>
+            </div>
+
+            <!-- 연 이자율 (Interest Rate) -->
+            <div class="space-y-2 pt-2">
+                <div class="flex justify-between items-center">
+                    <label for="rateInput" class="block text-sm font-semibold text-gray-700">연 이자율 (%)</label>
+                    <span class="text-xs text-gray-500">고정 금리 기준</span>
+                </div>
+                <div class="relative rounded-md shadow-sm">
+                    <input type="number" id="rateInput" name="rate" step="0.1" min="0.1" max="20" value="4.5" 
+                           class="block w-full rounded-lg border-gray-300 pl-4 pr-10 py-3 text-right text-lg font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 border outline-none transition-colors">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                        <span class="text-gray-500 font-medium">%</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 mt-2">
+                    <span class="text-xs text-gray-400 font-medium w-8">0.1%</span>
+                    <input type="range" id="rateSlider" min="0.1" max="20" step="0.1" value="4.5" class="flex-1">
+                    <span class="text-xs text-gray-400 font-medium w-8 text-right">20%</span>
+                </div>
+            </div>
+
+            <!-- 상환 기간 (Loan Term) -->
+            <div class="space-y-2 pt-2">
+                <div class="flex justify-between items-center">
+                    <label for="monthsInput" class="block text-sm font-semibold text-gray-700">상환 기간 (개월)</label>
+                    <span id="yearsText" class="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">10년</span>
+                </div>
+                <div class="relative rounded-md shadow-sm flex">
+                    <input type="number" id="monthsInput" name="months" min="1" max="600" value="120" 
+                           class="block w-full rounded-l-lg border-gray-300 pl-4 pr-4 py-3 text-right text-lg font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 border border-r-0 outline-none transition-colors">
+                    <div class="bg-gray-100 border border-gray-300 border-l-0 rounded-r-lg px-4 flex items-center">
+                        <span class="text-gray-600 font-medium">개월</span>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <button type="button" onclick="setMonths(12)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">1년</button>
+                    <button type="button" onclick="setMonths(36)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">3년</button>
+                    <button type="button" onclick="setMonths(60)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">5년</button>
+                    <button type="button" onclick="setMonths(120)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">10년</button>
+                    <button type="button" onclick="setMonths(360)" class="flex-1 py-1 px-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs rounded transition-colors">30년</button>
+                </div>
+            </div>
+
+            <!-- 거치 기간 (Grace Period) -->
+            <div class="space-y-2 pt-2 border-t border-gray-100">
+                <div class="flex justify-between items-center">
+                    <label for="graceMonthsInput" class="block text-sm font-semibold text-gray-700">거치 기간 (선택)</label>
+                    <span class="text-xs text-gray-500 group relative cursor-help">
+                        <i class="fa-solid fa-circle-info"></i> 거치란?
+                        <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded shadow-lg z-10">
+                            거치 기간 동안에는 원금을 갚지 않고 이자만 납부합니다. 이 기간이 끝나면 남은 기간 동안 원금과 이자를 함께 갚습니다.
+                        </div>
+                    </span>
+                </div>
+                <div class="relative rounded-md shadow-sm flex">
+                    <input type="number" id="graceMonthsInput" name="graceMonths" min="0" max="120" value="0" 
+                           class="block w-full rounded-l-lg border-gray-300 pl-4 pr-4 py-3 text-right text-lg font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 border border-r-0 outline-none transition-colors" placeholder="0">
+                    <div class="bg-gray-100 border border-gray-300 border-l-0 rounded-r-lg px-4 flex items-center">
+                        <span class="text-gray-600 font-medium">개월</span>
+                    </div>
+                </div>
+                <p id="graceWarning" class="text-xs text-red-500 hidden mt-1"><i class="fa-solid fa-triangle-exclamation"></i> 거치 기간은 총 상환 기간보다 짧아야 합니다.</p>
+            </div>
+            
+        </form>
+    </div>
+
+    <!-- Right Column: Results & Visualization -->
+    <div class="w-full md:w-1/2 p-6 sm:p-8 bg-gray-50 flex flex-col">
+        
+        <!-- Result Card -->
+        <div class="result-card rounded-2xl p-6 text-white shadow-lg mb-6 relative overflow-hidden">
+            <!-- Decorative circle -->
+            <div class="absolute -right-6 -top-6 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+            
+            <h2 class="text-sm font-medium opacity-90 mb-1">매월 상환해야 할 금액</h2>
+            <div class="flex items-baseline gap-1">
+                <span id="monthlyPayment" class="text-3xl sm:text-4xl font-extrabold tracking-tight">0</span>
+                <span class="text-lg font-medium opacity-90">원</span>
+            </div>
+            
+            <div id="graceInfoBox" class="mt-4 p-3 bg-white/20 rounded-lg hidden">
+                <p class="text-xs opacity-90 font-medium mb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i> 거치 기간 (<span id="gracePeriodDisplay">0</span>개월) 동안:</p>
+                <div class="flex items-baseline gap-1">
+                    <span id="graceMonthlyPayment" class="text-xl font-bold">0</span>
+                    <span class="text-sm opacity-90">원 / 월 (이자만)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Statistics -->
+        <div class="space-y-4 mb-6 flex-grow">
+            <h3 class="text-sm font-bold text-gray-700 border-b border-gray-200 pb-2">상환 내역 요약</h3>
+            
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-blue-500"></span> 대출 원금
+                </span>
+                <span id="summaryPrincipal" class="font-bold text-gray-900">0 원</span>
+            </div>
+            
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-orange-400"></span> 총 발생 이자
+                </span>
+                <span id="summaryInterest" class="font-bold text-gray-900">0 원</span>
+            </div>
+            
+            <div class="flex justify-between items-center pt-3 border-t border-gray-200 mt-2">
+                <span class="font-semibold text-gray-800">총 상환 금액</span>
+                <span id="summaryTotal" class="text-lg font-extrabold text-indigo-600">0 원</span>
+            </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="w-full mt-auto relative" style="height: 180px;">
+            <canvas id="loanChart"></canvas>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+    // Define UI Elements
+    const principalInput = document.getElementById('principalInput');
+    const principalText = document.getElementById('principalText');
+    const rateInput = document.getElementById('rateInput');
+    const rateSlider = document.getElementById('rateSlider');
+    const monthsInput = document.getElementById('monthsInput');
+    const yearsText = document.getElementById('yearsText');
+    const graceMonthsInput = document.getElementById('graceMonthsInput');
+    const graceWarning = document.getElementById('graceWarning');
+    
+    // Result Elements
+    const monthlyPaymentDisplay = document.getElementById('monthlyPayment');
+    const graceInfoBox = document.getElementById('graceInfoBox');
+    const gracePeriodDisplay = document.getElementById('gracePeriodDisplay');
+    const graceMonthlyPaymentDisplay = document.getElementById('graceMonthlyPayment');
+    
+    const summaryPrincipal = document.getElementById('summaryPrincipal');
+    const summaryInterest = document.getElementById('summaryInterest');
+    const summaryTotal = document.getElementById('summaryTotal');
+    
+    let chartInstance = null;
+
+    // --- Helper Functions ---
+    
+    // Format number with commas (e.g., 1000000 -> 1,000,000)
+    function formatNumber(num) {
+        return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Convert raw string to number removing commas
+    function parseNumber(str) {
+        const parsed = parseInt(str.replace(/,/g, ''), 10);
+        return isNaN(parsed) ? 0 : parsed;
+    }
+
+    // Convert Korean Won amount to readable text (e.g., 150000000 -> 1억 5,000만)
+    function formatKoreanMoneyText(num) {
+        if (num === 0) return '0원';
+        
+        const eok = Math.floor(num / 100000000);
+        const man = Math.floor((num % 100000000) / 10000);
+        
+        let result = '';
+        if (eok > 0) result += `${eok}억 `;
+        if (man > 0) result += `${formatNumber(man)}만 `;
+        
+        return result.trim() + ' 원';
+    }
+
+    // Convert months to years/months text
+    function formatMonthsText(months) {
+        const y = Math.floor(months / 12);
+        const m = months % 12;
+        if (y > 0 && m > 0) return `${y}년 ${m}개월`;
+        if (y > 0) return `${y}년`;
+        return `${m}개월`;
+    }
+
+    // --- Button Actions ---
+
+    // Quick add amount buttons
+    window.addAmount = function(amount) {
+        const currentVal = parseNumber(principalInput.value);
+        principalInput.value = formatNumber(currentVal + amount);
+        updateCalculations();
+    };
+
+    // Quick set months buttons
+    window.setMonths = function(months) {
+        monthsInput.value = months;
+        updateCalculations();
+    };
+
+    // --- Input Formatting & Synchronization ---
+    
+    
+    // Principal input formatting on type
+    principalInput.addEventListener('input', function(e) {
+        // Allow only numbers
+        let rawVal = this.value.replace(/[^0-9]/g, '');
+        if (rawVal === '') rawVal = '0';
+        
+        // Format with commas and update input
+        this.value = formatNumber(parseInt(rawVal, 10));
+        updateCalculations();
+    });
+
+    // Sync Interest Rate Input and Slider
+    rateInput.addEventListener('input', function() {
+        let val = parseFloat(this.value);
+        if(val > 20) { val = 20; this.value = 20; }
+        if(val < 0) { val = 0; this.value = 0; }
+        rateSlider.value = val;
+        updateCalculations();
+    });
+
+    rateSlider.addEventListener('input', function() {
+        rateInput.value = this.value;
+        updateCalculations();
+    });
+
+    // Update on months or grace period change
+    monthsInput.addEventListener('input', updateCalculations);
+    graceMonthsInput.addEventListener('input', updateCalculations);
+
+
+    
+    // --- Core Calculation Logic ---
+    function updateCalculations() {
+        // 1. Get and sanitize inputs
+        const principal = parseNumber(principalInput.value);
+        const annualRate = parseFloat(rateInput.value) || 0;
+        const totalMonths = parseInt(monthsInput.value) || 1;
+        let graceMonths = parseInt(graceMonthsInput.value) || 0;
+        
+        // Validation: Grace period cannot be >= total loan term
+        if (graceMonths >= totalMonths) {
+            graceWarning.classList.remove('hidden');
+            graceInfoBox.classList.add('hidden');
+            // Reset visual results if invalid
+            monthlyPaymentDisplay.innerText = "0";
+            return;
+        } else {
+            graceWarning.classList.add('hidden');
+        }
+
+        // Update UI helpers
+        principalText.innerText = formatKoreanMoneyText(principal);
+        yearsText.innerText = formatMonthsText(totalMonths);
+
+        // 2. Variables for calculation
+        const monthlyRate = (annualRate / 100) / 12;
+        const repaymentMonths = totalMonths - graceMonths;
+        
+        let monthlyPayment = 0;     // 상환 기간 중 매월 내는 원리금
+        let graceMonthlyInterest = 0; // 거치 기간 중 매월 내는 이자
+        let totalInterest = 0;      // 총 발생 이자
+        let totalPayment = 0;       // 총 상환 금액
+
+        // 3. Calculation
+        if (principal > 0 && totalMonths > 0) {
+            if (annualRate > 0) {
+                // 이자율이 있는 경우 (원리금균등분할상환 공식)
+                // PMT = P * r * (1+r)^n / ((1+r)^n - 1)
+                
+                // a. 거치 기간 이자 계산
+                if (graceMonths > 0) {
+                    graceMonthlyInterest = principal * monthlyRate;
+                    totalInterest += graceMonthlyInterest * graceMonths;
+                }
+                
+                // b. 원금 상환 기간 월 상환액 계산
+                if (repaymentMonths > 0) {
+                    const factor = Math.pow(1 + monthlyRate, repaymentMonths);
+                    monthlyPayment = principal * monthlyRate * factor / (factor - 1);
+                    
+                    // 상환 기간 동안 내는 총액
+                    const totalRepaymentPeriodPayment = monthlyPayment * repaymentMonths;
+                    // 상환 기간 동안 내는 이자 = 총액 - 원금
+                    totalInterest += (totalRepaymentPeriodPayment - principal);
+                }
+
+            } else {
+                // 무이자 대출인 경우
+                if (graceMonths > 0) {
+                    graceMonthlyInterest = 0;
+                }
+                if (repaymentMonths > 0) {
+                    monthlyPayment = principal / repaymentMonths;
+                }
+                totalInterest = 0;
+            }
+            
+            totalPayment = principal + totalInterest;
+        }
+
+        
+        // 4. Update Result UI
+        monthlyPaymentDisplay.innerText = formatNumber(monthlyPayment);
+        
+        summaryPrincipal.innerText = formatNumber(principal) + " 원";
+        summaryInterest.innerText = formatNumber(totalInterest) + " 원";
+        summaryTotal.innerText = formatNumber(totalPayment) + " 원";
+
+        // Handle Grace Period UI box
+        if (graceMonths > 0 && principal > 0) {
+            graceInfoBox.classList.remove('hidden');
+            gracePeriodDisplay.innerText = graceMonths;
+            graceMonthlyPaymentDisplay.innerText = formatNumber(graceMonthlyInterest);
+        } else {
+            graceInfoBox.classList.add('hidden');
+        }
+
+        // 5. Update Chart
+        updateChart(principal, totalInterest);
+    }
+
+    
+    // --- Chart Logic ---
+    function updateChart(principal, interest) {
+        const ctx = document.getElementById('loanChart').getContext('2d');
+        
+        // Destroy existing chart if it exists to prevent memory leaks/overlapping
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        // Handle edge case where both are 0
+        if (principal === 0 && interest === 0) {
+            // Draw an empty gray chart
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['입력 대기중'],
+                    datasets: [{
+                        data: [1],
+                        backgroundColor: ['#e5e7eb'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } }
+                }
+            });
+            return;
+        }
+
+        const data = [principal, interest];
+        
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['대출 원금', '총 이자'],
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#3b82f6', // blue-500
+                        '#fb923c'  // orange-400
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false // We have a custom legend in the HTML
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += formatNumber(context.parsed) + '원';
+                                    
+                                    // Add percentage
+                                    const total = context.chart._metasets[context.datasetIndex].total;
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1) + '%';
+                                    label += ` (${percentage})`;
+                                }
+                                return label;
+                            }
+                        },
+                        backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                        titleFont: { family: "'Noto Sans KR', sans-serif" },
+                        bodyFont: { family: "'Noto Sans KR', sans-serif" },
+                        padding: 10,
+                        cornerRadius: 8,
+                        displayColors: true
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 800
+                }
+            }
+        });
+    }
+
+    // Initialize calculations on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        updateCalculations();
+    });
+
+</script>
+</body>
+</html>
